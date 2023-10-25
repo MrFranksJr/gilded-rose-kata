@@ -77,9 +77,6 @@ describe("Gilded Rose", function() {
         product.quality,
       ])
     }
-
-    console.log(JSON.stringify(testArray));
-    console.log(testArray.length);
   });
  */
 
