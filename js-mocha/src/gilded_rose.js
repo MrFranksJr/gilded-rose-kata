@@ -73,7 +73,7 @@ function updateTicketQuality(item) {
     item.quality = 0;
   }
 
-  reduceSellIn(item)
+  reduceSellIn(item);
 }
 
 function updateConjuredQuality(item) {
