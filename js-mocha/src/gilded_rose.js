@@ -25,6 +25,9 @@ class Shop {
       else if (item.name == productData["HAND"]) {
         updateHandQuality(item);
       }
+      else if (item.name == productData["CONJURED"]) {
+        updateConjuredQuality(item);
+      }
       else {
         updateNormalProductQuality(item);
       }
@@ -39,47 +42,65 @@ module.exports = {
 }
 
 
-function updateHandQuality(item) { };
+
+//UPDATE FUNCTIONS
+function updateHandQuality(item) { 
+  //no logic necessary to update hand quality
+}
 
 function updateBrieQuality(item) {
   if (itemHasQualityLessThan(50, item)) {
-    item.quality += 1;
+    increaseQuality(item);
+    if (itemHasSellInLessThan(0, item)) {
+      increaseQuality(item);
+    }
   }
 
-  item.sellIn -= 1;
-
-  if (itemHasSellInLessThan(0, item) && itemHasQualityLessThan(50, item)) {
-      item.quality += 1;
-  }
-};
+  reduceSellIn(item);
+}
 
 function updateTicketQuality(item) { 
   if (itemHasQualityLessThan(50, item)) {
-    item.quality += 1;
+    increaseQuality(item);
     if (itemHasSellInLessThan(11, item) && itemHasQualityLessThan(50, item)) {
-        item.quality += 1;
+        increaseQuality(item);
         if (itemHasSellInLessThan(6, item)) {
-          item.quality += 1;
+          increaseQuality(item);
       }
     }
   }
-  item.sellIn -= 1;
-
   if (itemHasSellInLessThan(0, item)) {
     item.quality = 0;
   }
-};
+
+  reduceSellIn(item)
+}
+
+function updateConjuredQuality(item) {
+  if (itemHasQualityGreaterThan(0, item)) {
+    reduceQuality(item);
+    reduceQuality(item);
+    if (itemHasSellInLessThan(0, item)) {
+      //twice as fast when SellIn has expired too?
+      reduceQuality(item);
+      reduceQuality(item);
+    }
+  }
+
+  reduceSellIn(item);
+}
 
 function updateNormalProductQuality(item) { 
   if (itemHasQualityGreaterThan(0, item)) {
-      item.quality -= 1;
+      reduceQuality(item);
       if (itemHasSellInLessThan(0, item)) {
-        item.quality -= 1;
+        reduceQuality(item);
       }
   }
 
-  item.sellIn -= 1;
-};
+  reduceSellIn(item)
+}
+
 
 
 
@@ -99,4 +120,16 @@ function itemHasSellInLessThan(requestedSellIn, item) {
   if (item.sellIn < requestedSellIn) {
     return true;
   }
+}
+
+function reduceQuality(item) {
+  item.quality -= 1;
+}
+
+function increaseQuality(item) {
+  item.quality += 1;
+}
+
+function reduceSellIn(item) {
+  item.sellIn -= 1;
 }
