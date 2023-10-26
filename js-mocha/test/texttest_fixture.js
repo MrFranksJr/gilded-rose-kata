@@ -1,4 +1,3 @@
-
 const { Shop, Item } = require("../src/gilded_rose");
 
 const items = [
@@ -15,7 +14,7 @@ const items = [
   new Item("Conjured Mana Cake", 3, 6),
 ];
 
-const days = Number(process.argv[2]) || 2;
+const days = Number(process.argv[2]) || 5;
 const gildedRose = new Shop(items);
 
 console.log("OMGHAI!");

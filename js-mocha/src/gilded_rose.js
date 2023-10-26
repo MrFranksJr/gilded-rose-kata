@@ -1,3 +1,6 @@
+const productData = JSON.parse(JSON.stringify(require('../src/data/producttypes.json')));
+
+
 class Item {
   constructor(name, sellIn, quality){
     this.name = name;
@@ -6,54 +9,24 @@ class Item {
   }
 }
 
+
 class Shop {
   constructor(items=[]){
     this.items = items;
   }
   updateQuality() {
-    for (var i = 0; i < this.items.length; i++) {
-      if (this.items[i].name != 'Aged Brie' && this.items[i].name != 'Backstage passes to a TAFKAL80ETC concert') {
-        if (this.items[i].quality > 0) {
-          if (this.items[i].name != 'Sulfuras, Hand of Ragnaros') {
-            this.items[i].quality = this.items[i].quality - 1;
-          }
-        }
-      } else {
-        if (this.items[i].quality < 50) {
-          this.items[i].quality = this.items[i].quality + 1;
-          if (this.items[i].name == 'Backstage passes to a TAFKAL80ETC concert') {
-            if (this.items[i].sellIn < 11) {
-              if (this.items[i].quality < 50) {
-                this.items[i].quality = this.items[i].quality + 1;
-              }
-            }
-            if (this.items[i].sellIn < 6) {
-              if (this.items[i].quality < 50) {
-                this.items[i].quality = this.items[i].quality + 1;
-              }
-            }
-          }
-        }
+    for (const item of this.items) {
+      if (item.name == productData["BRIE"]) {
+        updateBrieQuality(item);
       }
-      if (this.items[i].name != 'Sulfuras, Hand of Ragnaros') {
-        this.items[i].sellIn = this.items[i].sellIn - 1;
+      else if (item.name == productData["TICKET"]) {
+        updateTicketQuality(item);
       }
-      if (this.items[i].sellIn < 0) {
-        if (this.items[i].name != 'Aged Brie') {
-          if (this.items[i].name != 'Backstage passes to a TAFKAL80ETC concert') {
-            if (this.items[i].quality > 0) {
-              if (this.items[i].name != 'Sulfuras, Hand of Ragnaros') {
-                this.items[i].quality = this.items[i].quality - 1;
-              }
-            }
-          } else {
-            this.items[i].quality = this.items[i].quality - this.items[i].quality;
-          }
-        } else {
-          if (this.items[i].quality < 50) {
-            this.items[i].quality = this.items[i].quality + 1;
-          }
-        }
+      else if (item.name == productData["HAND"]) {
+        updateHandQuality(item);
+      }
+      else {
+        updateNormalProductQuality(item);
       }
     }
 
@@ -63,4 +36,67 @@ class Shop {
 module.exports = {
   Item,
   Shop
+}
+
+
+function updateHandQuality(item) { };
+
+function updateBrieQuality(item) {
+  if (itemHasQualityLessThan(50, item)) {
+    item.quality += 1;
+  }
+
+  item.sellIn -= 1;
+
+  if (itemHasSellInLessThan(0, item) && itemHasQualityLessThan(50, item)) {
+      item.quality += 1;
+  }
+};
+
+function updateTicketQuality(item) { 
+  if (itemHasQualityLessThan(50, item)) {
+    item.quality += 1;
+    if (itemHasSellInLessThan(11, item) && itemHasQualityLessThan(50, item)) {
+        item.quality += 1;
+        if (itemHasSellInLessThan(6, item)) {
+          item.quality += 1;
+      }
+    }
+  }
+  item.sellIn -= 1;
+
+  if (itemHasSellInLessThan(0, item)) {
+    item.quality = 0;
+  }
+};
+
+function updateNormalProductQuality(item) { 
+  if (itemHasQualityGreaterThan(0, item)) {
+      item.quality -= 1;
+      if (itemHasSellInLessThan(0, item)) {
+        item.quality -= 1;
+      }
+  }
+
+  item.sellIn -= 1;
+};
+
+
+
+function itemHasQualityLessThan(requestedQuality, item) {
+  if (item.quality < requestedQuality) {
+    return true;
+  }
+}
+
+function itemHasQualityGreaterThan(requestedQuality, item) {
+  if (item.quality > requestedQuality) {
+    return true;
+  }
+}
+
+function itemHasSellInLessThan(requestedSellIn, item) {
+  if (item.sellIn < requestedSellIn) {
+    return true;
+  }
 }

@@ -4,7 +4,6 @@ var {Shop, Item} = require('../src/gilded_rose.js');
 const tests = require('../tests.json')
 
 describe("Gilded Rose", function() {
-
   for (test of tests) {
     const [
       name,
